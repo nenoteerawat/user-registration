@@ -22,7 +22,7 @@ public class JwtGenerator {
 
         Claims claims = Jwts.claims()
                 .setSubject(user.getUsername());
-        claims.put("authDate", dateUtil.getCurrentDateInNamalFormat());
+        claims.put("authDate", dateUtil.getCurrentDateInNormalFormat());
 
         return Jwts.builder()
                 .setClaims(claims)

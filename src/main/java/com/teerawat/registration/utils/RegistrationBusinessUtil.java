@@ -20,13 +20,13 @@ public class RegistrationBusinessUtil {
 	
 	public String generateReferenceCode(String phone) {
 		String subPhone = phone.substring(6, 10);
-		return dateUtil.getCurrentDateInNamalFormat().concat(subPhone);
+		return dateUtil.getCurrentDateInNormalFormat().concat(subPhone);
 	}
 	
 	public SalaryClassify getClassifyBySalary(Integer salary) {
 		if(salary > 50000) {
 			return SalaryClassify.Platinum;
-		} else if(salary > 30000){
+		} else if(salary >= 30000){
 			return SalaryClassify.Gold;
 		} else {
 			return SalaryClassify.Silver;

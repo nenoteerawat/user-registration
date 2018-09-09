@@ -14,7 +14,7 @@ public class DateUtil {
 	 * 
 	 * @return String date in format "yyyyMMdd"
 	 */
-	public String getCurrentDateInNamalFormat() {
+	public String getCurrentDateInNormalFormat() {
 		Date currentDate = new Date();
 		return YYYYMMDD_FORMAT.format(currentDate);
 	}
