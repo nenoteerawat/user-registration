@@ -1,0 +1,45 @@
+= Java Backend Test
+
+== Run Project
+1. open command line (cmd)
+2. go to project directory
+3. run command 
+
+[source, bash]
+----
+$ ./gradlew bootRun
+----
+
+== Project Service 
+=== Registration Service 
+run on restful put method with url => `localhost:8080/regis/user`
+
+Request Message
+
+[source, json]
+----
+{
+	"name":""
+	,"address":""
+	,"phone":""
+	,"username":""
+	,"password":""
+	,"salary":""
+}
+----
+
+=== Login Service
+run on restful put method with url => `localhost:8080/login/user`
+
+[source, json]
+----
+{
+	"username":""
+	,"password":""
+}
+----
+
+=== Get User Information Service
+run on restful put method with url => `localhost:8080/info/users`
+
+This service require authentication with spring security. You can authenticate with `authToken` in Login service or Registration service by put it in request header with key = `Authorisation` and value = `Token {authToken}`
