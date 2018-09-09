@@ -29,7 +29,7 @@ Request Message
 ----
 
 === Login Service
-run on restful put method with url => `localhost:8080/login/user`
+run on restful post method with url => `localhost:8080/login/user`
 
 [source, json]
 ----
@@ -40,6 +40,6 @@ run on restful put method with url => `localhost:8080/login/user`
 ----
 
 === Get User Information Service
-run on restful put method with url => `localhost:8080/info/users`
+run on restful get method with url => `localhost:8080/info/users`
 
 This service require authentication with spring security. You can authenticate with `authToken` in Login service or Registration service by put it in request header with key = `Authorisation` and value = `Token {authToken}`
