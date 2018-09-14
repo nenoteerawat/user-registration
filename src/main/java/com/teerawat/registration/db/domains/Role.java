@@ -1,5 +1,6 @@
-package com.teerawat.registration.db.entities;
+package com.teerawat.registration.db.domains;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,18 +11,21 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
-@Table(name="Login")
+@Table(name="app_role")
 @Data
-public class LoginEntity {
+public class Role {
 	
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Integer loginid;
+	@Column(name = "id")
+	private Integer id;
 	
 	@NotNull
-	private String username;
+	@Column(name = "role_name")
+	private String roleName;
 	
 	@NotNull
-	private String password;
+	@Column(name = "description")
+	private String description;
 
 }

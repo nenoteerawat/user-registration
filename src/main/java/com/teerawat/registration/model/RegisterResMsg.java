@@ -11,7 +11,7 @@ public class RegisterResMsg {
 		Reject(2,"Reject with no conditions"),
 		ExistUsername(3, "Username is already exist"),
 		CannotClassify(4, "Cannot Classify user because salary less than 15,000"),
-		AuthenticationFail(6, "Authentication failed")
+		AuthenticationFail(5, "Authentication failed")
 		;
 		int code;
 		String description;
@@ -21,6 +21,10 @@ public class RegisterResMsg {
 			switch (res.getCode()) {
 				case 0:return ResponseBody.Success;
 				case 1:return ResponseBody.Failed;
+				case 2:return ResponseBody.Reject;
+				case 3:return ResponseBody.ExistUsername;
+				case 4:return ResponseBody.CannotClassify;
+				case 5:return ResponseBody.AuthenticationFail;
 				default:return ResponseBody.Failed;
 			}
 		}

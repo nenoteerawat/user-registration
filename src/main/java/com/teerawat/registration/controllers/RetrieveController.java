@@ -1,25 +1,25 @@
 package com.teerawat.registration.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teerawat.registration.db.entities.UserEntity;
-import com.teerawat.registration.services.GetUserInfoService;
+import com.teerawat.registration.db.domains.User;
+import com.teerawat.registration.services.RetrieveService;
 
 @RestController
-@RequestMapping("/info")
-public class GetUserInfoController {
+@RequestMapping("/retrieve")
+public class RetrieveController {
 	
 	@Autowired
-	private GetUserInfoService getUserInfoService;
+	private RetrieveService getUserInfoService;
 	
 	@GetMapping
 	@RequestMapping(path="/users")
-	@ResponseBody
-	public Iterable<UserEntity> getAllUser() {
+	@PreAuthorize("hasAuthority('ADMIN_USER')")
+	public Iterable<User> getAllUser() {
 		return getUserInfoService.getAllUserInfo();
 	}
 	
