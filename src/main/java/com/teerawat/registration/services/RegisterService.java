@@ -1,9 +1,12 @@
 package com.teerawat.registration.services;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.teerawat.registration.db.domains.Role;
 import com.teerawat.registration.db.domains.User;
 import com.teerawat.registration.db.repositories.RoleRepository;
 import com.teerawat.registration.db.repositories.UserRepository;
@@ -19,19 +22,19 @@ public class RegisterService {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private RoleRepository loginRepository;
+	private RoleRepository roleRepository;
 
 	@Autowired
 	private RegisterHelper registerHelper;
 	
 	@Autowired
-	private DelegatingPasswordEncoder delegatingPasswordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	public RegisterResMsg register(RegisterReqMsg req) {
 		
 		User user = new User();
 		user.setFirstName(req.getFirstName());
-		user.setLast_name(req.getLastName());
+		user.setLastName(req.getLastName());
 		user.setAddress(req.getAddress());
 		user.setPhone(req.getPhone());
 		user.setReferenceCode(registerHelper.genRefCode(user.getPhone()));
@@ -42,8 +45,12 @@ public class RegisterService {
 		if(user.getClassification().equals("UnClassify")) return ResponseBody.CannotClassify.getRegisterResMsg();
 		
 		user.setUsername(req.getUsername());
-		user.setPassword(delegatingPasswordEncoder.encode(req.getPassword()));
+		user.setPassword(passwordEncoder.encode(req.getPassword()));
 		User exitUser = userRepository.findByUsername(req.getUsername());
+		Role role = roleRepository.findByRoleName("STANDARD_USER");
+		ArrayList<Role> roles = new ArrayList<Role>();
+		roles.add(role);
+		user.setRoles(roles);
 		if (null == exitUser) {
 			userRepository.save(user);
 			RegisterResMsg res = ResponseBody.Success.getRegisterResMsg();

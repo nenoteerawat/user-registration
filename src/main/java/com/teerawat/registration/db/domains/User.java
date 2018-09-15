@@ -32,7 +32,7 @@ public class User {
 	
 	@NotNull
 	@Column(name = "last_name")
-	private String last_name;
+	private String lastName;
 	
 	@NotNull
 	@Column(name = "username")

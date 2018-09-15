@@ -38,5 +38,4 @@ public class RegisterResMsg {
 	
 	private int code;
 	private String description;
-	private String authToken;
 }

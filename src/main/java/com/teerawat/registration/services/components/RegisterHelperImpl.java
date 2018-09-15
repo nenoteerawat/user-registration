@@ -20,7 +20,7 @@ public class RegisterHelperImpl implements RegisterHelper{
 			return dateFormat.format(new Date());
 		};
 		GenRefCode genRefCode = parameter -> {
-			return curDate.currentDate().concat(parameter);
+			return curDate.currentDate().concat(parameter.substring(parameter.length()-4, parameter.length()));
 		};
 		return genRefCode.genRefcode(phone);
 	}

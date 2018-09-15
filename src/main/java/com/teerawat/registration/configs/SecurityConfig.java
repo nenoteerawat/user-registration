@@ -1,8 +1,5 @@
 package com.teerawat.registration.configs;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,11 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -31,11 +25,11 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Value("${security.signing-key}")
+	@Value("${security.jwt.signing-key}")
 	private String signingKey;
 
-	@Value("${security.encoding-strength}")
-	private String encodingStrength;
+	@Value("${security.pbkdf2-secret-key}")
+	private String pdkdf2SecretKey;
 
 	@Value("${security.security-realm}")
 	private String securityRealm;
@@ -50,21 +44,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Bean
-	public PasswordEncoder delegatingPasswordEncoder() {
-	    Map<String, PasswordEncoder> encoders = new HashMap<>();
-	    encoders.put("bcrypt", new BCryptPasswordEncoder());
-	    encoders.put("scrypt", new SCryptPasswordEncoder());
-	    encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
-	    encoders.put("scrypt", new SCryptPasswordEncoder());
-	    DelegatingPasswordEncoder passworEncoder = new DelegatingPasswordEncoder(
-	      encodingStrength, encoders);
-	    return passworEncoder;
+	public PasswordEncoder passwordEncoder() {
+		return new Pbkdf2PasswordEncoder(pdkdf2SecretKey);
 	}
-
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService)
-		        .passwordEncoder(delegatingPasswordEncoder());
+		        .passwordEncoder(passwordEncoder());
 	}
 
 	@Override

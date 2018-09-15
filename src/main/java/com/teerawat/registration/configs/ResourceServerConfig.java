@@ -15,7 +15,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Autowired
     private ResourceServerTokenServices tokenServices;
 
-    @Value("${security.jwt.resource-ids}")
+    @Value("${security.resource-ids}")
     private String resourceIds;
     
     @Value("${security.jwt.permited-path-map}")
