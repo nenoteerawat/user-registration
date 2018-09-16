@@ -15,11 +15,14 @@ import com.teerawat.registration.models.NormalViewModel;
 @Service
 public class RetrieveService {
 	
-	@Autowired
 	private UserRepository userRepository;
+	private RoleRepository roleRepository;
 	
 	@Autowired
-	private RoleRepository roleRepository;
+	public RetrieveService(UserRepository userRepository, RoleRepository roleRepository) {
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+	}
 	
 	public Iterable<User> getAllUserInfo(){
 		return userRepository.findAll();

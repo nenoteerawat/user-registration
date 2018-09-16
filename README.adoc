@@ -10,36 +10,79 @@
 $ ./gradlew bootRun
 ----
 
-== Project Service 
-=== Registration Service 
-run on restful put method with url => `localhost:8080/regis/user`
+== Generate an access token
 
-Request Message
+   Use the following generic command to generate an access token:
+   `$ curl client:secret@localhost:8080/oauth/token -d grant_type=password -d username=user -d password=pwd`
+
+   For this specific application, to generate an access token for the non-admin user john.doe, run:
+   
+   `$ curl register:password@localhost:8080/oauth/token -d grant_type=password -d username=teerawat -d password=password`
+   
+   You'll receive a response similar to below
+   
+[source, json]
+----
+   `{
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidGVzdGp3dHJlc291cmNlaWQiXSwidXNlcl9uYW1lIjoiYWRtaW4uYWRtaW4iLCJzY29wZSI6WyJyZWFkIiwid3JpdGUiXSwiZXhwIjoxNDk0NDU0MjgyLCJhdXRob3JpdGllcyI6WyJTVEFOREFSRF9VU0VSIiwiQURNSU5fVVNFUiJdLCJqdGkiOiIwYmQ4ZTQ1MC03ZjVjLTQ5ZjMtOTFmMC01Nzc1YjdiY2MwMGYiLCJjbGllbnRfaWQiOiJ0ZXN0and0Y2xpZW50aWQifQ.rvEAa4dIz8hT8uxzfjkEJKG982Ree5PdUW17KtFyeec",
+      "token_type": "bearer",
+      "expires_in": 43199,
+      "scope": "read write",
+      "jti": "0bd8e450-7f5c-49f3-91f0-5775b7bcc00f"
+    }`
+----
+
+== Use the token to access resources through your RESTful API
+
+    * Access content available to all authenticated users
+    Use the generated token  as the value of the Bearer in the Authorization header as follows:
+
+[source, bash]
+----
+`curl  http://localhost:8080/retrieve/users -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidGVzdGp3dHJlc291cmNlaWQiXSwidXNlcl9uYW1lIjoiYWRtaW4uYWRtaW4iLCJzY29wZSI6WyJyZWFkIiwid3JpdGUiXSwiZXhwIjoxNDk0NDU0MjgyLCJhdXRob3JpdGllcyI6WyJTVEFOREFSRF9VU0VSIiwiQURNSU5fVVNFUiJdLCJqdGkiOiIwYmQ4ZTQ1MC03ZjVjLTQ5ZjMtOTFmMC01Nzc1YjdiY2MwMGYiLCJjbGllbnRfaWQiOiJ0ZXN0and0Y2xpZW50aWQifQ.rvEAa4dIz8hT8uxzfjkEJKG982Ree5PdUW17KtFyeec"`
+----
+
+The response will be:
 
 [source, json]
 ----
-{
-	"name":""
-	,"address":""
-	,"phone":""
-	,"username":""
-	,"password":""
-	,"salary":""
-}
+`[
+    {
+        "id": 1,
+        "firstName": "Teerawat",
+        "lastName": "Yamsai",
+        "username": "teerawat",
+        "password": "d50c0334fd8550d9cc67e84de8ba7994bd09828d92d6c80c5cf23ee92519aebfd1e6f7421fbdda2c",
+        "address": "148 Kuchinarai district Kalasin province",
+        "phone": "0995970594",
+        "referenceCode": "201809140594",
+        "salary": 100000,
+        "classification": "Platinum",
+        "roles": [
+            {
+                "id": 1,
+                "roleName": "STANDARD_USER",
+                "description": "Standard User - Has no admin rights"
+            },
+            {
+                "id": 2,
+                "roleName": "ADMIN_USER",
+                "description": "Admin User - Has permission to perform admin tasks"
+            }
+        ]
+    }
+]`
 ----
 
-=== Login Service
-run on restful post method with url => `localhost:8080/login/user`
+== Note
+I have 2 service for you.
 
-[source, json]
-----
-{
-	"username":""
-	,"password":""
-}
-----
+==== register
 
-=== Get User Information Service
-run on restful get method with url => `localhost:8080/info/users`
+- `http://localhost:8080/regis/user` this is free service anyone can register.
+- `http://localhost:8080/regis/useradmin` this is require login and only addmin role can register.
 
-This service require authentication with spring security. You can authenticate with `authToken` in Login service or Registration service by put it in request header with key = `Authorisation` and value = `Token {authToken}`
+==== retrive
+
+- `http://localhost:8080/retrieve/normalusers` require login and access with role admin or standard.
+- `http://localhost:8080/retrieve/users` require login and only access with role admin.
