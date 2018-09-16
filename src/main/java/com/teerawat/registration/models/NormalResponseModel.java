@@ -1,9 +1,9 @@
-package com.teerawat.registration.model;
+package com.teerawat.registration.models;
 
 import lombok.Data;
 
 @Data
-public class RegisterResMsg {
+public class NormalResponseModel {
 	
 	public enum ResponseBody{
 		Success(0,"Process Successful"),
@@ -17,7 +17,7 @@ public class RegisterResMsg {
 		String description;
 		ResponseBody(int code, String description) {this.code = code;this.description=description;}
 		
-		public ResponseBody getBodyByRegisterResMsg(RegisterResMsg res) {
+		public ResponseBody getBodyByRegisterResMsg(NormalResponseModel res) {
 			switch (res.getCode()) {
 				case 0:return ResponseBody.Success;
 				case 1:return ResponseBody.Failed;
@@ -28,8 +28,8 @@ public class RegisterResMsg {
 				default:return ResponseBody.Failed;
 			}
 		}
-		public RegisterResMsg getRegisterResMsg() {
-			RegisterResMsg res = new RegisterResMsg();
+		public NormalResponseModel getRegisterResMsg() {
+			NormalResponseModel res = new NormalResponseModel();
 			res.setCode(this.code);
 			res.setDescription(this.description);
 			return res;

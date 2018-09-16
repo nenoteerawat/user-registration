@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teerawat.registration.model.RegisterReqMsg;
-import com.teerawat.registration.model.RegisterResMsg;
+import com.teerawat.registration.models.NormalUserModel;
+import com.teerawat.registration.models.AdminUserModel;
+import com.teerawat.registration.models.NormalResponseModel;
 import com.teerawat.registration.services.RegisterService;
 
 @RestController
@@ -21,14 +22,14 @@ public class RegisterController {
 	
 	@PutMapping(path="/user")
 	@ResponseBody
-	public RegisterResMsg userRegister(@RequestBody RegisterReqMsg req) {
+	public NormalResponseModel userRegister(@RequestBody NormalUserModel req) {
 		return service.register(req);
 	}
 	
 	@PutMapping(path="/useradmin")
 	@ResponseBody
 	@PreAuthorize("hasAuthority('ADMIN_USER')")
-	public RegisterResMsg userAdminRegister(@RequestBody RegisterReqMsg req) {
+	public NormalResponseModel userAdminRegister(@RequestBody AdminUserModel req) {
 		return service.register(req);
 	}
 	

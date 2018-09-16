@@ -8,11 +8,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="app_role")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role {
 	
 	@Id
@@ -27,5 +33,5 @@ public class Role {
 	@NotNull
 	@Column(name = "description")
 	private String description;
-
+	
 }
