@@ -1,9 +1,9 @@
-package com.teerawat.registration.model;
+package com.teerawat.registration.models;
 
 import lombok.Data;
 
 @Data
-public class RegisterResMsg {
+public class NormalResponseModel {
 	
 	public enum ResponseBody{
 		Success(0,"Process Successful"),
@@ -11,21 +11,25 @@ public class RegisterResMsg {
 		Reject(2,"Reject with no conditions"),
 		ExistUsername(3, "Username is already exist"),
 		CannotClassify(4, "Cannot Classify user because salary less than 15,000"),
-		AuthenticationFail(6, "Authentication failed")
+		AuthenticationFail(5, "Authentication failed")
 		;
 		int code;
 		String description;
 		ResponseBody(int code, String description) {this.code = code;this.description=description;}
 		
-		public ResponseBody getBodyByRegisterResMsg(RegisterResMsg res) {
+		public ResponseBody getBodyByRegisterResMsg(NormalResponseModel res) {
 			switch (res.getCode()) {
 				case 0:return ResponseBody.Success;
 				case 1:return ResponseBody.Failed;
+				case 2:return ResponseBody.Reject;
+				case 3:return ResponseBody.ExistUsername;
+				case 4:return ResponseBody.CannotClassify;
+				case 5:return ResponseBody.AuthenticationFail;
 				default:return ResponseBody.Failed;
 			}
 		}
-		public RegisterResMsg getRegisterResMsg() {
-			RegisterResMsg res = new RegisterResMsg();
+		public NormalResponseModel getRegisterResMsg() {
+			NormalResponseModel res = new NormalResponseModel();
 			res.setCode(this.code);
 			res.setDescription(this.description);
 			return res;
@@ -34,5 +38,4 @@ public class RegisterResMsg {
 	
 	private int code;
 	private String description;
-	private String authToken;
 }

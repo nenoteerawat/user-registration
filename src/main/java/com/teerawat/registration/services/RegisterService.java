@@ -1,68 +1,56 @@
 package com.teerawat.registration.services;
 
-import javax.xml.bind.DatatypeConverter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.teerawat.registration.db.entities.LoginEntity;
-import com.teerawat.registration.db.entities.UserEntity;
-import com.teerawat.registration.db.repositories.LoginRepository;
+import com.teerawat.registration.db.domains.Role;
+import com.teerawat.registration.db.domains.User;
+import com.teerawat.registration.db.repositories.RoleRepository;
 import com.teerawat.registration.db.repositories.UserRepository;
-import com.teerawat.registration.model.JwtUser;
-import com.teerawat.registration.model.RegisterReqMsg;
-import com.teerawat.registration.model.RegisterResMsg;
-import com.teerawat.registration.model.RegisterResMsg.ResponseBody;
-import com.teerawat.registration.security.JwtGenerator;
-import com.teerawat.registration.utils.RegistrationBusinessUtil;
-import com.teerawat.registration.utils.TripleDESUtil;
+import com.teerawat.registration.models.GetUserInfo;
+import com.teerawat.registration.services.components.RegisterHelper;
 
 @Service
 public class RegisterService {
 
-	@Autowired
 	private UserRepository userRepository;
+	private RoleRepository roleRepository;
+	private RegisterHelper registerHelper;
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
-	private LoginRepository loginRepository;
-
-	@Autowired
-	private TripleDESUtil tripleDESUtil;
+	public RegisterService(UserRepository userRepository, RoleRepository roleRepository, 
+			RegisterHelper registerHelper, PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+		this.registerHelper = registerHelper;
+		this.passwordEncoder = passwordEncoder;
+	}
 	
-	@Autowired
-	private RegistrationBusinessUtil bussinessUtil;
-	
-	@Autowired
-	private JwtGenerator jwtGenerator;
-
-	public RegisterResMsg register(RegisterReqMsg req) {
+	public User register(GetUserInfo getUserInfo) {
+		User user = getUserInfo.getUser();
+		user.setReferenceCode(registerHelper.genRefCode(user.getPhone()));
+		user.setClassification(registerHelper.classifyUser(user.getSalary()));
 		
-		UserEntity userEntity = new UserEntity();
-		userEntity.setName(req.getName());
-		userEntity.setAddress(req.getAddress());
-		userEntity.setPhone(req.getPhone());
-		userEntity.setReference(bussinessUtil.generateReferenceCode(userEntity.getPhone()));
-		userEntity.setSalary(Integer.parseInt(req.getSalary()));
-		if(userEntity.getSalary() < 15000) {
-			return ResponseBody.CannotClassify.getRegisterResMsg();
-		}
-
-		LoginEntity loginEntity = new LoginEntity();
-		loginEntity.setUsername(req.getUsername());
-		try {
-			loginEntity.setPassword(DatatypeConverter.printBase64Binary((tripleDESUtil.encrypt(req.getPassword()))));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		userEntity.setLoginid(loginEntity);
-		LoginEntity exitLogin = loginRepository.findByUsername(loginEntity.getUsername());
-		if (null == exitLogin) {
-			userRepository.save(userEntity);
-			RegisterResMsg res = ResponseBody.Success.getRegisterResMsg();
-			res.setAuthToken(jwtGenerator.generate(new JwtUser(loginEntity)));
-			return res;
+		// Return if unclassify user class.
+		if(user.getClassification().equals("UnClassify")) return user;
+		
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		List<Role> roles = new ArrayList<Role>();
+		getUserInfo.getRole().forEach(roleName -> {
+			Role role = roleRepository.findByRoleName(roleName);
+			roles.add(role);
+		});
+		user.setRoles(roles);
+		User exitUser = userRepository.findByUsername(user.getUsername());
+		if (null == exitUser) {
+			return userRepository.save(user);
 		} else {
-			return ResponseBody.ExistUsername.getRegisterResMsg();
+			return null;
 		}
 
 	}
